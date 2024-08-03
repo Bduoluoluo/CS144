@@ -7,8 +7,7 @@
 class Reader;
 class Writer;
 
-class ByteStream
-{
+class ByteStream {
 public:
   explicit ByteStream( uint64_t capacity );
 
