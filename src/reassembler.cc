@@ -45,3 +45,7 @@ uint64_t Reassembler::bytes_pending () const {
   // Your code here.
   return this->pending_bytes_;
 }
+
+uint64_t Reassembler::get_unassembled_index () const {
+  return this->unassembled_index_;
+}
