@@ -50,6 +50,7 @@ string_view Reader::peek () const {
 
 void Reader::pop (uint64_t len) {
   // Your code here.
+  len = min(len, this->buffer_.size());
   this->bytesPoped += len;
   this->buffer_ = this->buffer_.substr(len);
 }

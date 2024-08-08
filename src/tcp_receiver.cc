@@ -1,12 +1,13 @@
 #include "tcp_receiver.hh"
-#include <iostream>
 
 using namespace std;
 
 void TCPReceiver::receive (TCPSenderMessage message) {
   // Your code here.
-  if (message.RST == true)
+  if (message.RST == true) {
     this->reader().set_error();
+    return;
+  }
   
   if (message.SYN) {
     this->ISN_ = true;
@@ -14,8 +15,8 @@ void TCPReceiver::receive (TCPSenderMessage message) {
   } else if (this->ISN_ == false)
     return;
 
-  this->reassembler_.insert(message.seqno.unwrap(this->zero_pointer_, this->reassembler_.get_unassembled_index()) - !message.SYN, message.payload, message.FIN);
-  this->rev_base_ = this->reassembler_.get_unassembled_index() + this->ISN_ + this->writer().is_closed();
+  this->reassembler_.insert(message.seqno.unwrap(this->zero_pointer_, this->writer().bytes_pushed()) - !message.SYN, message.payload, message.FIN);
+  this->rev_base_ = this->writer().bytes_pushed() + this->ISN_ + this->writer().is_closed();
 }
 
 TCPReceiverMessage TCPReceiver::send () const {
