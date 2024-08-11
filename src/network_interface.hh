@@ -1,6 +1,8 @@
 #pragma once
 
 #include <queue>
+#include <map>
+#include <vector>
 
 #include "address.hh"
 #include "ethernet_frame.hh"
@@ -81,4 +83,17 @@ private:
 
   // Datagrams that have been received
   std::queue<InternetDatagram> datagrams_received_ {};
+
+  static constexpr size_t ARP_TIME = 5000;
+  static constexpr size_t ETHERNET_TIME = 30000;
+
+  std::unordered_map<uint32_t, std::pair<EthernetAddress, size_t>> ip_to_ethernet_{};
+  std::unordered_map<uint32_t, size_t> last_arp_time_{};
+  std::unordered_map<uint32_t, std::vector<InternetDatagram>> waiting_dgram_{};
+
+  EthernetFrame get_ipv4_ethernet (const EthernetAddress& dst, const std::vector<std::string>& payload) const;
+  EthernetFrame get_request_ethernet (const std::vector<std::string>& payload) const;
+  EthernetFrame get_reply_ethernet (const EthernetAddress& dst, const std::vector<std::string>& payload) const;
+  ARPMessage get_arp_request (const uint32_t target_ip) const;
+  ARPMessage get_arp_reply (const EthernetAddress& target_ethernet, const uint32_t target_ip) const;
 };
